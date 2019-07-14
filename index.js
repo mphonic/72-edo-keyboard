@@ -1,16 +1,16 @@
-var osc = require("osc"),
+const osc = require("osc"),
     WebSocket = require("ws");
 
-var getIPAddresses = function () {
-    var os = require("os"),
-    interfaces = os.networkInterfaces(),
-    ipAddresses = [];
+const getIPAddresses = function () {
+    const os = require("os"),
+        interfaces = os.networkInterfaces(),
+        ipAddresses = [];
 
-    for (var deviceName in interfaces){
-        var addresses = interfaces[deviceName];
+    for (let deviceName in interfaces){
+        const addresses = interfaces[deviceName];
 
-        for (var i = 0; i < addresses.length; i++) {
-            var addressInfo = addresses[i];
+        for (let i = 0; i < addresses.length; i++) {
+            const addressInfo = addresses[i];
 
             if (addressInfo.family === "IPv4" && !addressInfo.internal) {
                 ipAddresses.push(addressInfo.address);
@@ -21,7 +21,7 @@ var getIPAddresses = function () {
     return ipAddresses;
 };
 
-var udp = new osc.UDPPort({
+const udp = new osc.UDPPort({
     // This is the port we're listening on.
     localAddress: "127.0.0.1",
     localPort: 57121,
@@ -32,7 +32,7 @@ var udp = new osc.UDPPort({
 });
 
 udp.on("ready", function () {
-    var ipAddresses = getIPAddresses();
+    const ipAddresses = getIPAddresses();
     console.log("Listening for OSC over UDP.");
     ipAddresses.forEach(function (address) {
         console.log(" Host:", address + ", Port:", udp.options.localPort);
@@ -42,17 +42,17 @@ udp.on("ready", function () {
 
 udp.open();
 
-var wss = new WebSocket.Server({
+const wss = new WebSocket.Server({
     port: 8081
 });
 
 wss.on("connection", function (socket) {
     console.log("A Web Socket connection has been established!");
-    var socketPort = new osc.WebSocketPort({
+    const socketPort = new osc.WebSocketPort({
         socket: socket
     });
 
-    var relay = new osc.Relay(udp, socketPort, {
+    const relay = new osc.Relay(udp, socketPort, {
         raw: true
     });
 });
