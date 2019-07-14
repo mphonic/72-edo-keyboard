@@ -28,19 +28,19 @@ s.waitForBoot({
 	OSCFunc({|args|
 		(args.size == 3).if({
 			var chan = args[1].asInteger;
-			n[chan - 2].set(\tune, (args[2].asInteger - 8192) / 8192);
+			n[chan - 1].set(\tune, (args[2].asInteger - 8192) / 8192);
 		});
 	}, "/72edo/pitchBend");
 
 	OSCFunc({|args|
 		(args.size == 3).if({
 			var chan = args[1].asInteger;
-			n[chan - 2].set(\baseNote, args[2].asInteger, \gate, 1, \amp, (~velocity / 127).squared);
+			n[chan - 1].set(\baseNote, args[2].asInteger, \gate, 1, \amp, (~velocity / 127).squared);
 		});
 	}, "/72edo/noteOn");
 
 	OSCFunc({|args|
 		var chan = args[1].asInteger;
-		n[chan - 2].set(\gate, 0);
+		n[chan - 1].set(\gate, 0);
 	}, "/72edo/noteOff");
 });
