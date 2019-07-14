@@ -1,5 +1,5 @@
 o = NetAddr.new("192.168.0.20", 8000);
-~velocity = 20;
+~velocity = 64;
 OSCFunc({|args|
 	(args.size == 4).if({
 		var chan = args[1].asInteger.asString;
