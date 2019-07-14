@@ -1,10 +1,10 @@
 # 72-edo Keyboard
 
-72-note equal-tempered octave keyboard for Windows touch devices (i.e., Surface). Theoretically works on any touch device that can run Chrome and SuperCollider &ndash; you'll just need to manually run Node and sclang or create your own shell scripts.
+72-note equal-tempered octave keyboard for Windows touch devices (i.e., Surface). Theoretically works on any touch device that can run Chrome and SuperCollider &ndash; you'll just need to manually run Node and sclang or create your own shell scripts (or try [cross-platform PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-6#powershell-core)).
 
 Runs in Chrome. Uses osc.js and SuperCollider to route Reaper-specific OSC messages (note on, note off, pitch bend). Uses multiple channels to allow polyphonic pitch bends.
 
-You can modify capture-osc.scd or use your own SuperCollider code to do whatever you want with the incoming OSC messages (`/72edo/noteOn`, `/72edo/noteOff`).
+You can modify `capture-osc-xxx.scd` or use your own SuperCollider code to do whatever you want with the incoming OSC messages (`/72edo/noteOn`, `/72edo/noteOff`).
 
 ## Installation
 
