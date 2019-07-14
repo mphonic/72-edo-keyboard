@@ -1,6 +1,6 @@
 s.waitForBoot({
-	SynthDef(\fmBow, {|baseNote = 440, tune = 0, amp = 0.0, pan = 0, gate = 0|
-        var e = EnvGen.kr(Env.asr(2, 1, 3), gate),
+	SynthDef(\pm, {|baseNote = 440, tune = 0, amp = 0.0, pan = 0, gate = 0|
+        var e = EnvGen.kr(Env.asr(0.067, 1, 0.1), gate),
 		freq = (baseNote + tune).midicps,
         scale = freq.explin(40, 4000.0, 1.2, 0.6);
         Out.ar(0,
@@ -23,7 +23,7 @@ s.waitForBoot({
         );
     }).send(s);
 	s.sync;
-	n = Array.fill(10, { Synth(\fmBow) });
+	n = Array.fill(10, { Synth(\pm) });
 	~velocity = 64;
 	OSCFunc({|args|
 		(args.size == 3).if({
