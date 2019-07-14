@@ -5,6 +5,20 @@
 body {
     color: #ddd;
     background-color:#333;
+    font-family: Georgia;
+}
+
+h1 {
+    text-align: center;
+    font-family: Futura, Helvetica;
+    font-size: 48px;
+    font-weight: normal;
+    opacity: 1;
+    transition: opacity 4s;
+}
+
+h1.off {
+    opacity: 0;
 }
 
 #swipe-zone {
@@ -52,6 +66,10 @@ body {
     white-space: nowrap;
     overflow-x: auto;
     padding: 0 2px;
+}
+#keyboard-container::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
 }
 
 .key-container {

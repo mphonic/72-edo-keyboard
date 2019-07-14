@@ -74,16 +74,17 @@
     </head>
 
     <body>
+        <h1>(Swipe in this area to scroll)</h1>
         <div id="swipe-zone" ontouchstart="startSwipe(event)" ontouchmove="swipe(event)" ontouchend="endSwipe(event)"></div>
         <div id="ekmelic-keyboard" ontouchstart="event.stopPropagation()">
             <div id="info-container">
                 <div>
-                    <button onclick="shiftOctave(-1)">&lt;</button>
+                    <button onclick="shiftOctave(-1)">&#8592;</button>
                     <span id="lowest-visible-note"></span>
                 </div>
                 <div>
                     <span id="highest-visible-note"></span>
-                    <button onclick="shiftOctave(1)">&gt;</button>
+                    <button onclick="shiftOctave(1)">&#8594;</button>
                 </div>
             </div>
             <div id="keyboard-container">
@@ -208,5 +209,7 @@
             }
             swipeStartX = 0;
         }
+
+        setTimeout(() => document.querySelector("h1").classList.add('off'), 3000);
     </script>
 </html>
