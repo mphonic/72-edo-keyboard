@@ -4,7 +4,7 @@
 
 Runs in Chrome. Uses osc.js and SuperCollider to route Reaper-specific OSC messages (note on, note off, pitch bend). Uses multiple channels to allow polyphonic pitch bends.
 
-You can modify `capture-osc-xxx.scd` or use your own SuperCollider code to do whatever you want with the incoming OSC messages (`/72edo/noteOn`, `/72edo/noteOff`).
+You can modify `capture-osc-xxx.scd` or use your own SuperCollider code to do whatever you want with the incoming OSC messages (`/72edo/noteOn`, `/72edo/noteOff`, `/72edo/pitchBend`).
 
 ## Installation
 
