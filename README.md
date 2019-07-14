@@ -15,12 +15,12 @@ From the command line:
 4. Install [SuperCollider](https://supercollider.github.io/download)
 5. Add sclang.exe to your PATH: `$Env:Path += ";C:\Program Files\SuperCollider-3.10.2"` (Confirm the path to SuperCollider on your machine). You can add this to your [profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-6)
 6. Enable touch events in Chrome: Go to `chrome://flags/#touch-events` and select "Enabled" for Touch Events API
-7. If you're not using an [MPE](http://www.rogerlinndesign.com/mpe.html) compatible virtual instrument, setup a [Reaper](http://reaper.fm/download.php) project with 10 virtual instruments, each accepting an individual MIDI channel from 2-11. Make sure that instrument pitch bend range is set to 1.
+7. For Reaper (or other DAW) output: If you're not using an [MPE](http://www.rogerlinndesign.com/mpe.html) compatible virtual instrument, setup a [Reaper](http://reaper.fm/download.php) project with 10 virtual instruments, each accepting an individual MIDI channel from 2-11. Make sure that instrument pitch bend range is set to 1.
 8. Enable script execution in PowerShell (as Administrator, run `Set-ExecutionPolicy RemoteSigned`)
 
 ## Starting
 
-Navigate to project directory in PowerShell and execute `.\init.ps1`
+Navigate to project directory in PowerShell and execute `.\init.ps1`. If you want SuperCollider to synthesize the sound internally, run `.init.ps1 internal` and wait for server boot confirmation in the terminal.
 
 A tab should open in Chrome with the keyboard GUI.
 
