@@ -15,7 +15,7 @@ From the command line:
 4. Install [SuperCollider](https://supercollider.github.io/download)
 5. Add sclang.exe to your PATH: `$Env:Path += ";C:\Program Files\SuperCollider-3.10.2"` (Confirm the path to SuperCollider on your machine). You can add this to your [profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-6)
 6. Enable touch events in Chrome: Go to `chrome://flags/#touch-events` and select "Enabled" for Touch Events API
-7. For [Reaper](http://reaper.fm/download.php) (or other DAW) output: If you're not using an [MPE](http://www.rogerlinndesign.com/mpe.html) compatible virtual instrument, setup a project with 10 virtual instruments, each accepting an individual MIDI channel from 2-11. Make sure that instrument pitch bend range is set to 1.
+7. For [Reaper](http://reaper.fm/download.php) (or other DAW) output: If you're not using an [MPE](http://www.rogerlinndesign.com/mpe.html) compatible virtual instrument, setup a project with 10 virtual instruments, each accepting an individual MIDI channel from 2-11. Make sure that instrument pitch bend range is set to 1. See below for OSC configuration in Reaper.
 8. Enable script execution in PowerShell (as Administrator, run `Set-ExecutionPolicy RemoteSigned`)
 
 ## Starting
@@ -32,3 +32,7 @@ Accidently closed initial PowerShell window?
 1. Open a new one and navigate to project directory
 2. Execute `Stop-Process -Name sclang`
 3. Execute `.\quit.ps1`
+
+## Configure Reaper to Receive OSC
+
+The IP and Port used in `capture-osc-reaper.scd` are 192.168.0.20 and 8000, respectively. You will either want to configure your host to listen via this IP / Port combination, or change the first line of `capture-osc-reaper.scd` to reflect your host's configuration. [These instructions](http://apps.incalcando.com/parat-documentation/establish-osc-connection-in-reaper/) on how to configure Reaper are as clear as any. Just make sure to enter the appropriate values for IP and Port.

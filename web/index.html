@@ -47,7 +47,7 @@
         const noteOn = function (e, note, bend) {
             e.preventDefault();
             if (activeNotes.filter(e => e.note === note && e.bend === bend).pop()) return;
-            var channel = getNextChannel();
+            let channel = getNextChannel();
             activeNotes.push({
                 channel: channel,
                 touchId: e.targetTouches[0].identifier,
@@ -66,7 +66,23 @@
             });
         };
 
-        const noteOff = function (e) {
+        const noteOff = function (e, note = null, bend = null) {
+            if (note && bend) {
+                let activeNote; 
+                activeNotes.some((n, c) => {
+                    if (n.note === note && n.bend === bend) {
+                        activeNote = n;
+                        activeNotes.splice(c, 1);
+                        return true;
+                    }
+                });
+                if (!activeNote) return;
+                port.send({
+                    address: "/72edo/noteOff",
+                    args: [activeNote.channel, activeNote.note]
+                });
+                return;
+            }
             for (var i=0; i < e.changedTouches.length; i++) {
                 activeNotes.some((n, c) => {
                     if (n.touchId === e.changedTouches[i].identifier) {
@@ -92,7 +108,7 @@
         }
 
         const incrementChannel = function() {
-            channel = Math.max((channel + 1) % 10, 1);
+            channel = Math.max((channel + 1) % 11, 1);
         }
 
         // GUI, UX
@@ -108,18 +124,21 @@
                 noteOn(event, note, bend, 20);
             });
             button.addEventListener("touchmove", function(event) {
-                const touch = event.changedTouches[0];
-                const element = document.elementFromPoint(touch.clientX, touch.clientY);
-                if (!element || !element.dataset.note) return;
-                activeNotes.some(e => {
-                    if (e.touchId === touch.identifier) {
-                        if (e.note != element.dataset.note || e.bend != element.dataset.bend) {
-                            noteOff(event);
-                            noteOn(event, element.dataset.note, element.dataset.bend, 20);
+                const touches = event.targetTouches;
+                for (let i = 0; i < touches.length; i++) {
+                    const touch = touches[i],
+                        element = document.elementFromPoint(touch.clientX, touch.clientY);
+                    if (!element || !element.dataset.note) return;
+                    activeNotes.some(e => {
+                        if (e.touchId === touch.identifier) {
+                            if (e.note != element.dataset.note || e.bend != element.dataset.bend) {
+                                noteOff(event, e.note, e.bend);
+                                noteOn(event, element.dataset.note, element.dataset.bend, 20);
+                            }
+                            return true;
                         }
-                        return true;
-                    }
-                });
+                    });
+                }
             });
             button.addEventListener("touchend", function(event) {
                 noteOff(event);
