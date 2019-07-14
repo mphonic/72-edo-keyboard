@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>72-edo Keyboard</title>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" type="text/css" media="all" href="osc-view.css"></link>
+        <script src="node_modules/osc/dist/osc-browser.min.js"></script>
+        <script type="text/javascript">
+
+            var port = new osc.WebSocketPort({
+                url: "ws://localhost:8081"
+            });
+
+            var activeNotes = [];
+
+            var channel = 0;
+
+            var isBlackKey = [false, true, false, true, false, false, true, false, true, false, true, false];
+
+            port.on("message", function (oscMessage) {
+                $("#message").text(JSON.stringify(oscMessage, undefined, 2));
+                console.log("message", oscMessage);
+            });
+
+            port.open();
+
+            var noteOn = function (e, note, bend) {
+                e.preventDefault();
+                if (activeNotes.filter(e => e.note === note && e.bend === bend).pop()) return;
+                var channel = getNextChannel();
+                activeNotes.push({
+                    channel: channel,
+                    touchId: e.targetTouches[0].identifier,
+                    note: note,
+                    bend: bend
+                });
+                port.send({
+                    address: "/72edo/noteOn",
+                    type: "iii",
+                    args: [channel, note, bend]
+                });
+            };
+
+            var noteOff = function (e) {
+                for (var i=0; i < e.changedTouches.length; i++) {
+                    activeNotes.some((n, c) => {
+                        if (n.touchId === e.changedTouches[i].identifier) {
+                            port.send({
+                                address: "/72edo/noteOff",
+                                args: [n.channel, n.note]
+                            });
+                            activeNotes.splice(c, 1);
+                            return true;
+                        }
+                    });
+                }
+            };
+
+            var getNextChannel = function() {
+                incrementChannel();
+                activeNotes.forEach(e => {
+                    if (channel === e.channel) {
+                        incrementChannel();
+                    }
+                });
+                return channel;
+            }
+
+            var incrementChannel = function() {
+                channel = Math.max((channel + 1) % 10, 1);
+            }
+
+        </script>
+    </head>
+
+    <body>
+        <div id="swipe-zone" ontouchstart="startSwipe(event)" ontouchmove="swipe(event)" ontouchend="endSwipe(event)"></div>
+        <div id="ekmelic-keyboard" ontouchstart="event.stopPropagation()">
+            <div id="info-container">
+                <div>
+                    <button onclick="shiftOctave(-1)">&lt;</button>
+                    <span id="lowest-visible-note"></span>
+                </div>
+                <div>
+                    <span id="highest-visible-note"></span>
+                    <button onclick="shiftOctave(1)">&gt;</button>
+                </div>
+            </div>
+            <div id="keyboard-container">
+
+            </div>
+        </div>
+    </body>
+
+    <script>
+        var notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+        var keyboardContainer = document.getElementById('keyboard-container');
+        var lowestNoteContainer = document.getElementById('lowest-visible-note');
+        var highestNoteContainer = document.getElementById('highest-visible-note');
+        var scrollTimeout;
+        var swipeTouch;
+        var swipeStartTime;
+        var swipeStartX;
+        var swipeLastX;
+        var attachNoteListeners = function(note, bend) {
+            button.addEventListener("touchstart", function(event) {
+                noteOn(event, note, bend, 20);
+            });
+            button.addEventListener("touchmove", function(event) {
+                var touch = event.changedTouches[0];
+                var element = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (!element || !element.dataset.note) return;
+                activeNotes.some(e => {
+                    if (e.touchId === touch.identifier) {
+                        if (e.note != element.dataset.note || e.bend != element.dataset.bend) {
+                            noteOff(event);
+                            noteOn(event, element.dataset.note, element.dataset.bend, 20);
+                        }
+                        return true;
+                    }
+                });
+            });
+            button.addEventListener("touchend", function(event) {
+                noteOff(event);
+            });
+        }
+        for (var i = 0; i < 128; i++) {
+            var key = document.createElement('DIV');
+            key.className = 'key-container';
+            key.classList.add(isBlackKey[i % 12] ? 'key-black' : 'key-white');
+            var note = i;
+            for (var j = 0; j < 7; j++) {
+                var button = document.createElement('DIV');
+                var cents = ((j - 3) * -1) / 3 * 0.5;
+                var bend = Math.round(cents * 8192 + 8192);
+                button.className = 'key-part';
+                button.dataset.note = note;
+                button.dataset.bend = bend;
+                attachNoteListeners(note, bend);
+                key.appendChild(button);
+            }
+            keyboardContainer.appendChild(key);
+        }
+
+        var getVisibleNoteRange = function() {
+            var scrollPosition = keyboardContainer.scrollLeft;
+            var keyWidth = document.querySelector(".key-container").offsetWidth;
+            var keyOffset = Math.floor(Math.round(scrollPosition / keyWidth) / 12) - 2;
+            var keySpread = keyboardContainer.offsetWidth / keyWidth;
+            var lowestNoteIndex = Math.round(scrollPosition / keyWidth) % 12;
+            var lowestNote = notes[lowestNoteIndex] + keyOffset;
+            var highestNote = notes[(lowestNoteIndex + Math.floor(keySpread)) % 12] + 
+                (Math.floor(
+                    Math.floor((scrollPosition + keyboardContainer.offsetWidth) / keyWidth) 
+                    / 12
+                ) - 2);
+            lowestNoteContainer.innerHTML = lowestNote;
+            highestNoteContainer.innerHTML = highestNote;
+        }
+        // getVisibleNoteRange();
+
+        keyboardContainer.addEventListener("scroll", function(e) {
+            getVisibleNoteRange();
+        });
+
+        var shiftOctave = function(direction) {
+            var keyWidth = document.querySelector(".key-container").offsetWidth;
+            if (scrollTimeout) clearTimeout(scrollTimeout);
+            animateScrollLeft(keyboardContainer, Math.min(Math.max(keyboardContainer.scrollLeft + (keyWidth * 12 * direction), 0), keyboardContainer.scrollWidth));
+        }
+
+        var animateScrollLeft = function(element, destination) {
+            var scrollLeft = element.scrollLeft;
+            if (Math.abs(scrollLeft - destination) < 4) {
+                element.scrollLeft = destination;
+                return;
+            }
+            element.scrollLeft = Math.max((destination - scrollLeft) * 0.5 + scrollLeft, 0);
+            scrollTimeout = setTimeout(function() { animateScrollLeft(element, destination) }, 30); 
+        }
+
+        // put middle c in the middle
+        var keyWidth = document.querySelector(".key-container").offsetWidth;
+        keyboardContainer.scrollLeft = 50 * keyWidth;
+
+        // swipe area
+        var startSwipe = function(e) {
+            swipeTouch = e.targetTouches[0].identifier;
+            swipeStartX = e.targetTouches[0].clientX;
+            swipeLastX = swipeStartX;
+            swipeStartTime = Date.now();
+            if (scrollTimeout) clearTimeout(scrollTimeout);
+        }
+
+        var swipe = function(e) {
+            if (e.changedTouches[0].identifier != swipeTouch) return;
+            keyboardContainer.scrollLeft += swipeLastX - e.changedTouches[0].clientX;
+            swipeLastX = e.changedTouches[0].clientX;
+        }
+
+        var endSwipe = function(e) {
+            if (e.changedTouches[0].identifier != swipeTouch) return;
+            var timeDifference = Date.now() - swipeStartTime;
+            if (timeDifference < 500) {
+                var distance = swipeStartX - e.changedTouches[0].clientX;
+                var max = keyboardContainer.scrollWidth - keyboardContainer.offsetWidth;
+                animateScrollLeft(keyboardContainer, Math.min(Math.max(keyboardContainer.scrollLeft + distance / (timeDifference * 0.0025), 0), max));
+            }
+            swipeStartX = 0;
+        }
+    </script>
+</html>

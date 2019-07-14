@@ -1,0 +1,119 @@
+* {
+   box-sizing: border-box;
+}
+
+body {
+    color: #ddd;
+    background-color:#333;
+}
+
+#swipe-zone {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+#ekmelic-keyboard {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    padding: 0 6px;
+    width: 100%;
+    z-index: 10;
+}
+#info-container {
+    overflow: auto;
+    padding: 0.5rem 0;
+}
+#info-container > div {
+    display: inline-block;
+}
+#info-container > div:first-child {
+    float: left;
+}
+#info-container > div:last-child {
+    float: right;
+}
+#info-container button {
+    background-color: #333;
+    font-size: 18px;
+    color: #ddd;
+    padding: 1rem;
+    border: none;
+}
+
+#keyboard-container {
+    width: 100%;
+    max-width: 100%;
+    background-color: #333;
+    white-space: nowrap;
+    overflow-x: auto;
+    padding: 0 2px;
+}
+
+.key-container {
+    display: inline-block;
+    width: 60px;
+    padding: 6px 2px;
+}
+
+.key-container:last-child {
+    margin-right: 0;
+}
+
+.key-part {
+    position: relative;
+    width: 54px;
+    height: 60px;
+}
+
+.key-white .key-part {
+    background-color: white;
+}
+
+.key-black .key-part {
+    background-color: black;
+}
+.key-black .key-part:first-child {
+    margin-top: 12px;
+    height: 48px;
+}
+.key-black .key-part:last-child {
+    margin-bottom: 12px;
+    height: 48px;
+}
+
+.key-part::after {
+    display: block;
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+}
+
+.key-white .key-part::after {
+    background-color: black;
+}
+
+.key-black .key-part::after {
+    background-color: white;
+}
+
+.key-part:first-child::after,
+.key-part:last-child::after {
+    opacity: 0.4;
+}
+.key-part:nth-child(2)::after,
+.key-part:nth-child(6)::after {
+    opacity: 0.3;
+}
+.key-part:nth-child(3)::after,
+.key-part:nth-child(5)::after {
+    opacity: 0.125;
+}
