@@ -20,7 +20,7 @@ From the command line:
 
 ## Starting
 
-Navigate to project directory in PowerShell and execute `.\init.ps1`. If you want SuperCollider to synthesize the sound internally, run `.init.ps1 internal` and wait for server boot confirmation in the terminal.
+Navigate to project directory in PowerShell and execute `.\init.ps1`. If you want SuperCollider to synthesize the sound internally, run `.\init.ps1 internal` and wait for server boot confirmation in the terminal.
 
 A tab should open in Chrome with the keyboard GUI.
 
