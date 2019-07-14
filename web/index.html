@@ -55,9 +55,14 @@
                 bend: bend
             });
             port.send({
+                address: "/72edo/pitchBend",
+                type: "ii",
+                args: [channel, bend]
+            });
+            port.send({
                 address: "/72edo/noteOn",
-                type: "iii",
-                args: [channel, note, bend]
+                type: "ii",
+                args: [channel, note]
             });
         };
 
