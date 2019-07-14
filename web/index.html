@@ -5,72 +5,6 @@
         <meta charset="UTF-8" />
         <link rel="stylesheet" type="text/css" media="all" href="osc-view.css"></link>
         <script src="node_modules/osc/dist/osc-browser.min.js"></script>
-        <script type="text/javascript">
-
-            const port = new osc.WebSocketPort({
-                url: "ws://localhost:8081"
-            });
-
-            const activeNotes = [];
-
-            const isBlackKey = [false, true, false, true, false, false, true, false, true, false, true, false];
-
-            let channel = 0;
-
-            port.on("message", function (oscMessage) {
-                $("#message").text(JSON.stringify(oscMessage, undefined, 2));
-                console.log("message", oscMessage);
-            });
-
-            port.open();
-
-            const noteOn = function (e, note, bend) {
-                e.preventDefault();
-                if (activeNotes.filter(e => e.note === note && e.bend === bend).pop()) return;
-                var channel = getNextChannel();
-                activeNotes.push({
-                    channel: channel,
-                    touchId: e.targetTouches[0].identifier,
-                    note: note,
-                    bend: bend
-                });
-                port.send({
-                    address: "/72edo/noteOn",
-                    type: "iii",
-                    args: [channel, note, bend]
-                });
-            };
-
-            const noteOff = function (e) {
-                for (var i=0; i < e.changedTouches.length; i++) {
-                    activeNotes.some((n, c) => {
-                        if (n.touchId === e.changedTouches[i].identifier) {
-                            port.send({
-                                address: "/72edo/noteOff",
-                                args: [n.channel, n.note]
-                            });
-                            activeNotes.splice(c, 1);
-                            return true;
-                        }
-                    });
-                }
-            };
-
-            const getNextChannel = function() {
-                incrementChannel();
-                activeNotes.forEach(e => {
-                    if (channel === e.channel) {
-                        incrementChannel();
-                    }
-                });
-                return channel;
-            }
-
-            const incrementChannel = function() {
-                channel = Math.max((channel + 1) % 10, 1);
-            }
-
-        </script>
     </head>
 
     <body>
@@ -94,6 +28,70 @@
     </body>
 
     <script>
+        // OSC Actions, Note handling
+        const port = new osc.WebSocketPort({
+            url: "ws://localhost:8081"
+        });
+
+        const activeNotes = [];
+
+        let channel = 0;
+
+        port.on("message", function (oscMessage) {
+            $("#message").text(JSON.stringify(oscMessage, undefined, 2));
+            console.log("message", oscMessage);
+        });
+
+        port.open();
+
+        const noteOn = function (e, note, bend) {
+            e.preventDefault();
+            if (activeNotes.filter(e => e.note === note && e.bend === bend).pop()) return;
+            var channel = getNextChannel();
+            activeNotes.push({
+                channel: channel,
+                touchId: e.targetTouches[0].identifier,
+                note: note,
+                bend: bend
+            });
+            port.send({
+                address: "/72edo/noteOn",
+                type: "iii",
+                args: [channel, note, bend]
+            });
+        };
+
+        const noteOff = function (e) {
+            for (var i=0; i < e.changedTouches.length; i++) {
+                activeNotes.some((n, c) => {
+                    if (n.touchId === e.changedTouches[i].identifier) {
+                        port.send({
+                            address: "/72edo/noteOff",
+                            args: [n.channel, n.note]
+                        });
+                        activeNotes.splice(c, 1);
+                        return true;
+                    }
+                });
+            }
+        };
+
+        const getNextChannel = function() {
+            incrementChannel();
+            activeNotes.forEach(e => {
+                if (channel === e.channel) {
+                    incrementChannel();
+                }
+            });
+            return channel;
+        }
+
+        const incrementChannel = function() {
+            channel = Math.max((channel + 1) % 10, 1);
+        }
+
+        // GUI, UX
+        const isBlackKey = [false, true, false, true, false, false, true, false, true, false, true, false];
         const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
         const keyboardContainer = document.getElementById('keyboard-container');
         const lowestNoteContainer = document.getElementById('lowest-visible-note');
@@ -206,6 +204,7 @@
             swipeStartX = 0;
         }
 
+        // Fade out helper message
         setTimeout(() => document.querySelector("h1").classList.add('off'), 3000);
     </script>
 </html>
