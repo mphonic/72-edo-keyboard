@@ -20,7 +20,7 @@ From the command line:
 
 ## Starting
 
-Using PowerShell, from project directory, execute `.\init.ps1`
+Navigate to project directory in PowerShell and execute `.\init.ps1`
 
 A tab should open in Chrome with the keyboard GUI.
 
