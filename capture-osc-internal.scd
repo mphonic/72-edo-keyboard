@@ -24,7 +24,7 @@ s.waitForBoot({
     }).send(s);
 	s.sync;
 	n = Array.fill(10, { Synth(\pm) });
-	~velocity = 64;
+	~velocity = 30;
 	OSCFunc({|args|
 		(args.size == 3).if({
 			var chan = args[1].asInteger;
