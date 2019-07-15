@@ -36,3 +36,9 @@ Accidently closed initial PowerShell window?
 ## Configure Reaper to Receive OSC
 
 The IP and Port used in `capture-osc-reaper.scd` are 192.168.0.20 and 8000, respectively. You will either want to configure your host to listen via this IP / Port combination, or change the first line of `capture-osc-reaper.scd` to reflect your host's configuration. [These instructions](http://apps.incalcando.com/parat-documentation/establish-osc-connection-in-reaper/) on how to configure Reaper are as clear as any. Just make sure to enter the appropriate values for IP and Port.
+
+## Customizing
+
+The `init.ps1` script accepts an optional argument determining which .scd document is executed. You can add any number of SuperCollider documents with file names in the form of `capture-osc-[name].scd` and execute them with `.\init.ps1 [name]`.
+
+Additionally, the PowerShell scripts (`init.ps1` and `quit.ps1`) are quite simple and easily converted to Bash scripts. Or, one could optionally run the lines in them (with little modification) manually from the terminal.
