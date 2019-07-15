@@ -1,4 +1,4 @@
-# 72-EDO Keyboard
+# 72-EDO Polyphonic Keyboard
 
 72-note equal-tempered octave keyboard for Windows touch devices (i.e., Surface). Theoretically works on any touch device that can run Chrome and SuperCollider &ndash; you'll just need to manually run Node and sclang or create your own shell scripts (or try [cross-platform PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-6#powershell-core)).
 
