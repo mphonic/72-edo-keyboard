@@ -6,7 +6,7 @@ Runs in Chrome. Uses osc.js and SuperCollider to route Reaper-specific OSC messa
 
 You can modify `capture-osc-xxx.scd` or use your own SuperCollider code to do whatever you want with the incoming OSC messages (`/72edo/noteOn`, `/72edo/noteOff`, `/72edo/pitchBend`).
 
-## Installation
+## Installation and Configuration
 
 From the command line:
 1. Run <code>npm install</code>
